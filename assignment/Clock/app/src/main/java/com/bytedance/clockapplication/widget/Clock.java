@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -105,7 +106,15 @@ public class Clock extends View {
         drawHoursValues(canvas);
         drawNeedles(canvas);
 
-        // todo 每一秒刷新一次，让指针动起来
+        final Handler handler=new Handler();
+        final Runnable runnable=new Runnable() {
+            @Override
+            public void run() {
+                invalidate();
+            }
+        };
+        handler.postDelayed(runnable,1000);
+        // todo  每一秒刷新一次，让指针动起来
 
     }
 
@@ -166,6 +175,7 @@ public class Clock extends View {
         // 画秒针
         drawPointer(canvas, 2, nowSeconds);
         // 画分针
+        drawPointer(canvas,1,nowMinutes);
         // todo 画分针
         // 画时针
         int part = nowMinutes / 12;
@@ -189,7 +199,9 @@ public class Clock extends View {
                 break;
             case 1:
                 // todo 画分针，设置分针的颜色
-
+                degree=value*UNIT_DEGREE;
+                mNeedlePaint.setColor(Color.BLUE);
+                pointerHeadXY=getPointerHeadXY(MINUTE_POINTER_LENGTH,degree);
                 break;
             case 2:
                 degree = value * UNIT_DEGREE;
